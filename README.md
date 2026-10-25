@@ -1,7 +1,7 @@
 # Penguino
 
 This AzerothCore module contains Penguino's C++ gossip script and level 80 gear
-presets. It does not require ALE or Eluna.
+presets. It does not require ALE.
 
 ## Level 80 boost
 
