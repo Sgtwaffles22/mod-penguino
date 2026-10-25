@@ -1,0 +1,5 @@
+[worldserver]
+
+# Enable the level 80 boost option in Penguino's gossip menu.
+# Default: 1
+Penguino.EnableLevel80Boost = 1
