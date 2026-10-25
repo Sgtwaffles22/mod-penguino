@@ -3,49 +3,6 @@
 This AzerothCore module contains Penguino's C++ gossip script and level 80 gear
 presets. It does not require ALE or Eluna.
 
-## Installation and missing NPC recovery
-
-Build the module into `worldserver` and apply
-`data/sql/db-world/updates/2026_10_10_00_mod_penguino.sql` to the world database.
-The SQL installs creature entry `9000100`, its model, eleven world spawns, and
-vendor inventory, and binds the NPC to `npc_penguino`.
-
-With `compose.podman.yaml`, the `ac-db-import` service applies new core and module
-SQL updates before `worldserver` starts. The updater skips an unchanged SQL file
-that is already recorded in the world's `updates` table, even if its NPC data
-has subsequently been deleted. A rebuild or restart alone will not restore it.
-
-If Penguino is missing, check the template and spawns for entry `9000100`.
-Deliberately reapply the installation SQL to restore deleted NPC data, then
-restart `worldserver` to load it. Check that the eleven reserved spawn GUIDs in
-the SQL are available before reapplying it. Restoring the database rows does not
-require rebuilding a server that already contains `npc_penguino`.
-
-## Missing level 80 boost menu
-
-The boost option is always added by the current C++ script. If Penguino's menu
-only shows the vendor and gold options, check whether the running `worldserver`
-binary includes the boost text:
-
-```bash
-podman exec ac-worldserver grep -a -q -F \
-  'Boost me to level 80 with best-in-slot gear.' /azerothcore/env/dist/bin/worldserver
-```
-
-An exit status of `1` means the running binary lacks the boost option. Mounting
-the module source into a container does not update its compiled C++ scripts.
-Build and recreate the worldserver service from the repository root:
-
-```bash
-podman compose -f compose.podman.yaml build ac-worldserver
-podman compose -f compose.podman.yaml up -d --no-deps --force-recreate ac-worldserver
-```
-
-Run these commands as the same user that owns the live Podman stack (`hserver`
-on this server), without `sudo`. Other users have separate image and container
-stores. Restarting an existing container keeps its original image; recreating
-the service deploys the newly built image.
-
 ## Level 80 boost
 
 Talk to Penguino and choose **Boost me to level 80 with best-in-slot gear**.
